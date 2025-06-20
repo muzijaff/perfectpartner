@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Perfect Center</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #cbb7ea;
+      text-align: center;
+      padding: 20px;
+    }
+    .question {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .images {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .images img {
+      width: 300px;
+      height: 300px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 4px solid transparent;
+      border-radius: 15px;
+      transition: transform 0.2s, border 0.2s;
+    }
+    .images img:hover {
+      transform: scale(1.05);
+    }
+    .correct {
+      border: 4px solid #24cd75 !important;
+    }
+    .wrong {
+      border: 4px solid #fa0d15 !important;
+    }
+    .result {
+      margin-top: 30px;
+      font-size: 22px;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="quoteBox" style="font-size: 24px; margin-top: 40px; font-style: italic;">✨ "If you want to be perfect, begin by doing what is good."</div>
+  <h1>🌟 Welcome to Perfect Center!</h1>
+  <div class="question" id="questionText"></div>
+  <div class="images" id="imageOptions"></div>
+  <div class="result hidden" id="resultBox">
+  <p id="resultText">🎉 You finished the quiz!</p>
+  <button onclick="restartQuiz()">🔁 Play Again</button>
+  </div>
+
+  <!-- Audio feedback -->
+  <audio id="correctSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3ae48f0e04.mp3?filename=correct-answer-2-89678.mp3"></audio>
+  <audio id="wrongSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_b5e84c2c5e.mp3?filename=wrong-answer-126515.mp3"></audio>
+
+  <script>
+    const questions = [
+      { text: "which is good for perfect person?", images: [ { src: "gtouch.jpg", isGood: true }, {src: "btouch.webp", isGood: false  } ] },
+      { text: "you are ?", images: [ { src: "coerd.webp", isGood: false }, { src: "brave.jpeg", isGood: true } ] },
+      { text: "Which image shows love and care?", images: [ { src: "hate.jpeg", isGood: false }, { src: "love.webp", isGood: true } ] },
+      { text: "you are the perfect person , what you do?", images: [ {src: "rwrite.jpg", isGood: true  }, { src: "copy.png", isGood: false } ] },
+      { text: "takecare of ourselves by?", images: [ { src: "junk.jpg", isGood: false }, { src: "eat.jpeg", isGood: true } ] },
+      { text: "you must keep yourself?", images: [ { src: "ot.webp", isGood: false }, { src: "relax.jpg", isGood: true } ] },
+      { text: "one of the good thing is?", images: [ {src: "wasah.webp", isGood: true }, { src: "mess.jpeg", isGood: false  } ] },
+      { text: "who need for better enjoyment of life?", images: [ { src: "bfrnds.jpg", isGood: false }, { src: "helpnfrnds.webp", isGood: true } ] },
+      { text: "spending of time for?", images: [ { src: "nhelphome.webp", isGood: false }, { src: "helphome.webp", isGood: true } ] },
+      { text: "takecare of animals ?", images: [ { src: "hunt.jpg", isGood: false }, { src: "pet.png", isGood: true } ] },
+      { text: "you are perfect then you had?", images: [ { src: "outwaste.jpg", isGood: false }, { src: "wasteindustbin.jpg", isGood: true } ] },
+      { text: "grow with own?", images: [ {src: "pro.jpg", isGood: false }, { src: "ownwork.jpg", isGood: true } ] },
+      { text: "public awarness makes the man perfect , so did?", images: [ { src: "pollu.jpg", isGood: false }, { src: "cucle.jpg", isGood: true } ] },
+      { text: "perfectness outcomes by?", images: [ { src: "ununi.jpeg", isGood: false }, { src: "funi.jpg", isGood: true } ] },
+      { text: "one of the best part of perfect man?", images: [ { src: "nolis.jpg", isGood: false }, { src: "lis.jpeg", isGood: true } ] },
+      { text: "perfect one make our surroundings?", images: [ { src: "clean.jpeg", isGood: true }, { src: "unclean.jpg", isGood: false} ] },
+      { text: "shows your perfectness by honest ?", images: [ { src: "stolen.jpg", isGood: false }, { src: "giving.jpg", isGood: true } ] },
+      { text: "you are like a ?", images: [ { src: "confi.jpeg", isGood: true }, { src: "disappoint.png", isGood: false } ] },
+      { text: "most important thing in study is?", images: [ { src: "dontcare.jpeg", isGood: false }, { src: "focus.jpeg", isGood: true } ] },
+      { text: "drive the with?", images: [ {src: "noconfi.png", isGood: false }, {src: "goalsetting.jpg", isGood: true } ] },
+      { text: "facing all thing with?", images: [ { src: "ununi.jpeg", isGood: false }, { src: "bold.jpg", isGood: true } ] },
+      { text: "support the environment by?", images: [ { src: "cut.avif", isGood: false }, { src: "samp.jpg", isGood: true } ] },
+      { text: "Make your health perfect by ?", images: [ {  src: "eat.jpeg", isGood: true }, {src: "junk.jpg", isGood: false } ] },
+      { text: "one of the good habbit is?", images: [ { src: "savewater.webp", isGood: true }, {src: "wastewater.jpg", isGood: false  } ] },
+      { text: "this is one of best part of life?", images: [ { src: "sad.jpeg", isGood: false }, { src: "frndly.jpeg", isGood: true } ] },
+      { text: "one of the most perfect work?", images: [ { src: "exread.jpg", isGood: false }, { src: "dread.jpg", isGood: true } ] },
+      { text: "change your self as good with?", images: [ {src: "fphone.webp", isGood: true}, { src: "lonephn.webp", isGood: false   } ] },
+      { text: "The most table thing is gossip so we does ?", images: [ { src: "gossip.jpg", isGood: false }, { src: "dspeak.jpg", isGood: true } ] },
+      { text: "how you are?", images: [ { src: "bath.jpeg", isGood: true }, {src: "hatebath.jpeg", isGood: false  } ] },
+      { text: "always keeps your mind ?", images: [ { src: "sad.jpeg", isGood: false }, { src: "happy.png", isGood: true } ] },
+      { text: "beauty of perfect?", images: [ {src: "read.jpg", isGood: true }, { src: "pro.jpg", isGood: false } ] },
+      { text: "most valuable thought to ?", images: [ {src: "wastingmoney.jpg", isGood: false }, {src: "save.jpg", isGood: true  } ] },
+      { text: "you want strong then you can ?", images: [ { src: "noteat.jpg", isGood: false }, { src: "eat.jpeg", isGood: true } ] },
+      { text: "main thing to make the man perfect?", images: [ { src: "panchual.jpg", isGood: true}, { src: "later.avif", isGood: false  } ] },
+      { text: "keep kindness?", images: [ { src: "shout.jpg", isGood: false }, { src: "kinftalk.jpg", isGood: true } ] },
+      { text: "you not a ghost you are the best person so how you keep ?", images: [ { src: "pnails.jpg", isGood: true }, { src: "lngnails.jpg", isGood: false } ] },
+      { text: "succesfull dream found in?", images: [ { src: "sleapless.jpeg", isGood: false }, { src: "sleap.jpg", isGood: true } ] },
+      { text: "make our body fit by?", images: [ {src:"exe.jpeg", isGood: true}, { src: "unfit.jpg",isGood: false } ] }
+    ];
+
+    let currentQuestion = 0; 
+    let score = 0;
+
+    const questionText = document.getElementById("questionText");
+    const imageOptions = document.getElementById("imageOptions");
+    const resultBox = document.getElementById("resultBox");
+    const correctSound = document.getElementById("correctSound");
+    const wrongSound = document.getElementById("wrongSound");
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      questionText.textContent = q.text;
+      imageOptions.innerHTML = "";
+      q.images.forEach((img, index) => {
+        const image = document.createElement("img");
+        image.src = img.src;
+        image.onclick = () => selectAnswer(img.isGood, image);
+        imageOptions.appendChild(image);
+      });
+    }
+
+    function selectAnswer(isCorrect, clickedImage) {
+      const images = imageOptions.querySelectorAll("img");
+      images.forEach(img => { img.onclick = null; });
+
+      if (isCorrect) {
+        clickedImage.classList.add("correct");
+        correctSound.play();
+        score++;
+      } else {
+        clickedImage.classList.add("wrong");
+        wrongSound.play();
+      }
+
+      setTimeout(() => {
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+          setTimeout(() => {
+            document.getElementById("quoteBox").style.display = "none";
+            showQuestion();
+          }, 100);
+        } else {
+          showResult();
+        }
+      },1000);
+    }
+
+    function showResult() {
+      questionText.classList.add("hidden");
+      imageOptions.classList.add("hidden");
+
+      const percentage = Math.round((score / questions.length) * 100);
+      let feedback = "";
+
+      if (percentage >= 90) {
+        feedback = "🎉 <strong>Perfect</strong> – Perfect makes the person success.";
+      } else if (percentage >= 70) {
+        feedback = "😄 <strong>Good</strong> – Make yourself success by more perfect.";
+      } else if (percentage >= 50) {
+        feedback = "😌 <strong>Nice</strong> – Try to make yourself as perfect.";
+      } else if (percentage >= 30) {
+        feedback = "🧘 <strong>Ok</strong> – You are good but change it as perfect.";
+      } else {
+        feedback = "👣 <strong>Dear</strong> – Goodness in life is the true life. Make a thought as perfect then you are the perfect.";
+      }
+
+      resultBox.classList.remove("hidden");
+      resultBox.innerHTML = `🎯 You got ${score} out of ${questions.length} correct.<br>
+                             👍 You are <strong>${percentage}% good</strong>!<br><br>
+                             ${feedback}`;
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
